@@ -15,7 +15,7 @@ pipeline {
             steps {
                 sh '''
                 whoami
-                apt-get update && apt-get install -y python3 python3-venv
+                sudo apt-get update && sudo apt-get install -y python3 python3-venv
                 which python3
                 python3 -m venv venv
                 ./venv/bin/pip install -r requirements.txt
