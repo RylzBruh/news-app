@@ -44,11 +44,10 @@ pipeline {
                             ls -la
                             pwd
                             ./venv/bin/pip install cyclonedx-bom
-                            ./venv/bin/cyclonedx-py -r -o dependency-check-bom.json
+                            ./venv/bin/cyclonedx-py requirements -r -o dependency-check-bom.json
                         '''
                         dependencyCheck additionalArguments: '''
                         --nvdApiKey \'$NVD_API_KEY\'
-                        --scan \'/var/lib/jenkins/workspace/pplication_feature_enabling-cicd/requirements.txt\
                         --scan \'./\'
                         --scan \'./\'
                         --out \'./\'
