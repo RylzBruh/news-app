@@ -11,9 +11,13 @@ pipeline {
                 '''
             }
         }
-        stage ('VM Python Version') {
+        stage ('Install Dependencies') {
             steps {
-                sh 'python3 --version'
+                sh '''
+                which python3 || (apt-get update && apt-get install -y python3 python3-venv)
+                python3 -m venv venv
+                ./venv/bin/pip install -r requirements.txt
+                '''
             }
         }
     }
