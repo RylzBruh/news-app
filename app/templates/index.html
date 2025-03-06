@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Magnificent Seven News</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Magnificent Seven Stock News</h1>
+    </header>
+    
+    <main>
+        {% for news in news_items %}
+        <article class="news-card">
+            <h2>{{ news.company }}</h2>
+            <h3>{{ news.title }}</h3>
+            <p>{{ news.description }}</p>
+            <div class="news-meta">
+                <span>{{ news.publishedAt }}</span>
+                <a href="{{ news.url }}" target="_blank">Read More</a>
+            </div>
+        </article>
+        {% endfor %}
+    </main>
+</body>
+</html>
