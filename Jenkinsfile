@@ -1,6 +1,11 @@
 pipeline {
     agent any
 
+    environment {
+        API_KEY = credentials('NEWS_API_KEY')
+        NVD_API_KEY = credentials('NVD_API_KEY')
+    }
+
     stages {
         stage ('Prepare Environment') {
             steps {
@@ -40,6 +45,7 @@ pipeline {
                         --out \'./\'
                         --format \'ALL\'
                         --prettyPrint
+                        --nvdApiKey \'${NVD_API_KEY}\'
                         ''', odcInstallation: 'OWASP-DepCheck-10'
                     }
                 }
