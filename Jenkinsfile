@@ -22,23 +22,27 @@ pipeline {
                 '''
             }
         }
-        stage ('pip-audit check') {
-            steps {
-                sh '''
-                    ./venv/bin/pip-audit --strict --format=columns --output=pip_audit_report.txt
-                    ./venv/bin/pip-audit --strict --format=cyclonedx-json --output=pip_audit_report.sbom.json
-                    ./venv/bin/pip-audit --strict --format=json --output=pip_audit_report.json
-                '''
-            }
-        }
-        stage ('OWASP Dependency-Check') {
-            steps {
-                dependencyCheck additionalArguments: '''
-                --scan \'./\'
-                --out \'./\'
-                --format \'ALL\'
-                --prettyPrint
-                ''', odcInstallation: 'OWASP-DepCheck-10'
+        stage ('Dependency Scanning') {
+            parallel {
+                stage ('pip-audit check') {
+                    steps {
+                        sh '''
+                            ./venv/bin/pip-audit --strict --format=columns --output=pip_audit_report.txt
+                            ./venv/bin/pip-audit --strict --format=cyclonedx-json --output=pip_audit_report.sbom.json
+                            ./venv/bin/pip-audit --strict --format=json --output=pip_audit_report.json
+                        '''
+                    }
+                }
+                stage ('OWASP Dependency-Check') {
+                    steps {
+                        dependencyCheck additionalArguments: '''
+                        --scan \'./\'
+                        --out \'./\'
+                        --format \'ALL\'
+                        --prettyPrint
+                        ''', odcInstallation: 'OWASP-DepCheck-10'
+                    }
+                }
             }
         }
     }
