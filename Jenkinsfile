@@ -8,12 +8,12 @@ pipeline {
         TF_API_TOKEN = credentials('TERRAFORM_CLOUD_API')
         WORKSPACE_ID = 'ws-sbPFYMrFfwvtFurY'
     }
-    stage ('Checkout') {
+    stages ('Checkout') {
         steps {
             checkout scm
         }
     }
-    stage ('Prepare Environment') {
+    stages ('Prepare Environment') {
         steps {
             sh '''
                 echo "NEWS_API_KEY=${API_KEY}" > .env
@@ -22,7 +22,7 @@ pipeline {
             '''
         }
     }
-    stage ('Setup Requirements') {
+    stages ('Setup Requirements') {
         steps {
             sh '''
                 which python3 || (apt-get update && apt-get install -y python3 python3-venv)
@@ -31,7 +31,7 @@ pipeline {
             '''
         }
     }
-    stage ('Run Tests') {
+    stages ('Run Tests') {
         steps {
             sh './venv/bin/python -m pytest tests/'
         }
