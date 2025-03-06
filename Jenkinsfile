@@ -15,10 +15,10 @@ pipeline {
             steps {
                 sh '''
                 whoami
-                sudo apt-get update --no-audit && sudo apt-get install -y python3 python3-venv --no-audit
+                sudo apt-get update -qq && sudo apt-get install -y python3 python3-venv -qq
                 which python3
                 python3 -m venv venv
-                ./venv/bin/pip install -r requirements.txt --no-audit
+                ./venv/bin/pip install -r requirements.txt --no-cache-dir
                 '''
             }
         }
