@@ -44,11 +44,10 @@ pipeline {
                             ls -la
                             pwd
                             echo $NVD_API_KEY
-                            cat "/var/lib/jenkins/workspace/pplication_feature_enabling-cicd\requirements.txt"
                         '''
                         dependencyCheck additionalArguments: '''
                         --nvdApiKey \'$NVD_API_KEY\'
-                        --scan \'/var/lib/jenkins/workspace/pplication_feature_enabling-cicd\requirements.txt'
+                        --scan \'/var/lib/jenkins/workspace/pplication_feature_enabling-cicd/requirements.txt'
                         --scan \'./\'
                         --out \'./\'
                         --format \'ALL\'
