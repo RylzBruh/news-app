@@ -32,8 +32,8 @@ pipeline {
                 stage ('pip-audit check') {
                     steps {
                         sh '''
-                            ./venv/bin/pip-audit --strict --format=columns --output=pip_audit_report.txt
-                            ./venv/bin/pip-audit --strict --format=cyclonedx-json --output=pip_audit_report.sbom.json
+                            ./venv/bin/pip-audit --format=columns --output=pip_audit_report.txt
+                            ./venv/bin/pip-audit --format=cyclonedx-json --output=pip_audit_report.sbom.json
                             ./venv/bin/pip-audit --strict --format=json --output=pip_audit_report.json
                         '''
                     }
@@ -43,13 +43,16 @@ pipeline {
                         sh '''
                             ls -la
                             pwd
+                            echo $NVD_API_KEY
                         '''
                         dependencyCheck additionalArguments: '''
+                        --nvdApiKey \'$NVD_API_KEY\'
                         --scan \'./\'
                         --out \'./\'
                         --format \'ALL\'
-                        --prettyPrint
-                        ''', odcInstallation: 'OWASP-DepCheck-10'
+                        --prettyPrint''', odcInstallation: 'OWASP-DepCheck-12-1-0'
+
+                        dependencyCheckPublisher pattern: 'dependency-check-report.xml', stopBuild: true, unstableTotalCritical: 1
                     }
                 }
             }
