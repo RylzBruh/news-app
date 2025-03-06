@@ -1,6 +1,6 @@
 pipeline {
     agent any
-    }
+
     stages {
         stage ('Prepare Environment') {
             steps {
@@ -16,3 +16,5 @@ pipeline {
                 sh 'python3 --version'
             }
         }
+    }
+}
