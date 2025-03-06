@@ -41,7 +41,9 @@ pipeline {
     post {
         always {
             archiveArtifacts artifacts: 'pip_audit_report.txt', fingerprint: true
-            junit 'pip_audit_report.txt'
+        }
+        cleanup {
+            deleteDir()
         }
     }
 }
