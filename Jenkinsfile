@@ -24,7 +24,7 @@ pipeline {
         }
         stage ('pip-audit check') {
             steps {
-                sh './venv/bin/pip-audit --strict'
+                sh './venv/bin/pip-audit --strict --format=cyclonedx-json --output=pip_audit_report.sbom.json'
             }
         }
     }
