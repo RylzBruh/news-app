@@ -48,7 +48,7 @@ pipeline {
                         '''
                         dependencyCheck additionalArguments: '''
                         --nvdApiKey \'$NVD_API_KEY\'
-                        --scan \'./\'
+                        --scan \'./dependency-check-bom.json\'
                         --scan \'./\'
                         --out \'./\'
                         --format \'ALL\'
