@@ -22,5 +22,10 @@ pipeline {
                 '''
             }
         }
+        stage ('pip-audit check') {
+            steps {
+                sh './venv/bin/pip-audit --strict'
+            }
+        }
     }
 }
