@@ -49,7 +49,6 @@ pipeline {
                         --out \'./\'
                         --format \'ALL\'
                         --prettyPrint
-                        --nvdApiKey \'${NVD_API_KEY}\'
                         ''', odcInstallation: 'OWASP-DepCheck-10'
                     }
                 }
