@@ -48,7 +48,7 @@ pipeline {
                         '''
                         dependencyCheck additionalArguments: '''
                         --nvdApiKey \'$NVD_API_KEY\'
-                        --scan \'./dependency-check-bom.json\'
+                        --scan \'/var/lib/jenkins/workspace/pplication_feature_enabling-cicd/dependency-check-bom.json\'
                         --scan \'./\'
                         --out \'./\'
                         --format \'ALL\'
