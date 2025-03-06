@@ -40,6 +40,8 @@ pipeline {
                 }
                 stage ('OWASP Dependency-Check') {
                     steps {
+                        ls -la
+                        pwd
                         dependencyCheck additionalArguments: '''
                         --scan \'./\'
                         --out \'./\'
