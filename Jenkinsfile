@@ -43,8 +43,8 @@ pipeline {
                         sh '''
                             ls -la
                             pwd
-                            pip install cyclonedx-bom
-                            cyclonedx-py -r -o dependency-check-bom.json
+                            ./venv/bin/pip install cyclonedx-bom
+                            ./venv/bin/cyclonedx-py -r -o dependency-check-bom.json
                         '''
                         dependencyCheck additionalArguments: '''
                         --nvdApiKey \'$NVD_API_KEY\'
