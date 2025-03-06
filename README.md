@@ -1,5 +1,5 @@
 # Magnificent Seven Stock News
-Edited
+
 A local web application that displays recent news about the Magnificent Seven tech stocks (Apple, Microsoft, Alphabet, Amazon, NVIDIA, Meta, and Tesla).asd
 
 ## Setup
