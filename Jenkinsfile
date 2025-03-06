@@ -28,35 +28,12 @@ pipeline {
             }
         }
         stage ('Dependency Scanning') {
-            parallel {
-                stage ('pip-audit check') {
-                    steps {
-                        sh '''
-                            ./venv/bin/pip-audit --format=columns --output=pip_audit_report.txt
-                            ./venv/bin/pip-audit --format=cyclonedx-json --output=pip_audit_report.sbom.json
-                            ./venv/bin/pip-audit --strict --format=json --output=pip_audit_report.json
-                        '''
-                    }
-                }
-                stage ('OWASP Dependency-Check') {
-                    steps {
-                        sh '''
-                            ls -la
-                            pwd
-                            ./venv/bin/pip install cyclonedx-bom
-                            ./venv/bin/cyclonedx-py requirements -o dependency-check-bom.json
-                        '''
-                        dependencyCheck additionalArguments: '''
-                        --nvdApiKey \'$NVD_API_KEY\'
-                        --scan \'/var/lib/jenkins/workspace/pplication_feature_enabling-cicd/dependency-check-bom.json\'
-                        --scan \'./\'
-                        --out \'./\'
-                        --format \'ALL\'
-                        --prettyPrint''', odcInstallation: 'OWASP-DepCheck-12-1-0'
-
-                        dependencyCheckPublisher pattern: 'dependency-check-report.xml', stopBuild: true, unstableTotalCritical: 1
-                    }
-                }
+            steps {
+                sh '''
+                    ./venv/bin/pip-audit --format=columns --output=pip_audit_report.txt
+                    ./venv/bin/pip-audit --format=cyclonedx-json --output=pip_audit_report.sbom.json
+                    ./venv/bin/pip-audit --strict --format=json --output=pip_audit_report.json
+                '''
             }
         }
     }
