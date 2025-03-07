@@ -55,15 +55,19 @@ pipeline {
 
         stage ('SAST - Static application security testing - SonarQube') {
             steps {
-                sh 'echo $SONAR_SCANNER_HOME'
-                sh '''
-                    $SONAR_SCANNER_HOME/bin/sonar-scanner \
-                        -Dsonar.projectKey=Solar-System-Project \
-                        -Dsonar.sources=app/ \
-                        -Dsonar.host.url=http://172.19.154.120:9000 \
-                        -Dsonar.python.coverage.reportPaths=coverage.xml \
-                        -Dsonar.token=sqp_5dbed4dfdefdcf62b992eaeded2c6fd7dee7be8f 
-                '''
+                timeout(time: 60, unit: 'SECONDS') {
+                    withSonarQubeEnv('sonarqube-server') {
+                        sh 'echo $SONAR_SCANNER_HOME'
+                        sh '''
+                            $SONAR_SCANNER_HOME/bin/sonar-scanner \
+                                -Dsonar.projectKey=Solar-System-Project \
+                                -Dsonar.sources=app/ \
+                                -Dsonar.python.coverage.reportPaths=coverage.xml 
+                        '''
+
+                        waitForQualityGate abortPipeline: true
+                    }
+                }
             }
         }
 
