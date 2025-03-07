@@ -4,6 +4,7 @@ pipeline {
     environment {
         API_KEY = credentials('NEWS_API_KEY')
         NVD_API_KEY = credentials('NVD_API_KEY')
+        SONAR_SCANNER_HOME = tool 'sonar-scanner7-0-1';
     }
 
     stages {
@@ -16,6 +17,7 @@ pipeline {
                 '''
             }
         }
+
         stage ('Install Dependencies') {
             steps {
                 sh '''
@@ -27,6 +29,7 @@ pipeline {
                 '''
             }
         }
+
         stage ('Dependency Scanning') {
             steps {
                 sh '''
@@ -36,6 +39,7 @@ pipeline {
                 '''
             }
         }
+
         stage ('Unit Testing') {
             steps {
                 sh '''
@@ -48,6 +52,21 @@ pipeline {
                 '''
             }
         }
+
+        stage ('SAST - Static application security testing - SonarQube') {
+            steps {
+                sh 'echo $SONAR_SCANNER_HOME'
+                sh '''
+                    $SONAR_SCANNER_HOME/bin/sonar-scanner \
+                        -Dsonar.projectKey=Solar-System-Project \
+                        -Dsonar.sources=app/ \
+                        -Dsonar.host.url=http://172.19.154.120:9000 \
+                        -Dsonar.token=sqp_5dbed4dfdefdcf62b992eaeded2c6fd7dee7be8f 
+                '''
+            }
+        }
+
+      
     }
 
     post {
