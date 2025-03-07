@@ -44,7 +44,7 @@ pipeline {
                     export PYTHONPATH=$PWD
                     ./venv/bin/pytest --help | grep "pytest.ini"
                     ./venv/bin/pytest --cov=app --cov-report=html --cov-report=xml --cov-report=term-missing --junitxml=tests/results.xml tests/
-                    ls -la /var/lib/jenkins/workspace/pplication_feature_enabling-cicd/htmlcov
+                    ls -la htmlcov
                 '''
                 junit allowEmptyResults: true, keepProperties: true, stdioRetention: '', testResults: 'tests/results.xml'
 
@@ -54,7 +54,7 @@ pipeline {
 
     post {
         always {
-            
+
             archiveArtifacts allowEmptyArchive: true, artifacts: 'htmlcov/**, *_report.json', fingerprint: true, followSymlinks: false, onlyIfSuccessful: true
 
             publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'htmlcov', reportFiles: 'index.html', reportName: 'Code Coverage HTML Report', reportTitles: '', useWrapperFileDirectly: true])
