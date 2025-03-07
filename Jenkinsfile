@@ -36,14 +36,23 @@ pipeline {
                 '''
             }
         }
+        stage ('Unit Testing') {
+            steps {
+                sh '''
+                    ./venv/bin/pytest --cov=app --cov-report=html --cov-report=xml tests/
+                '''
+
+                juinit allowEmptyResults: true, testResults: 'tests/results.xml'
+            }
+        }
     }
 
     post {
         always {
             archiveArtifacts artifacts: 'pip_audit_report.txt', fingerprint: true
         }
-        cleanup {
-            deleteDir()
-        }
+        // cleanup {
+        //     deleteDir()
+        // }
     }
 }

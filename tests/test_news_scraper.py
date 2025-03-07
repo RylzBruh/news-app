@@ -9,7 +9,7 @@ load_dotenv()
 def test_news_fetching_with_env_api_key():
     """Test if get_magnificent_seven_news works with API key from .env"""
     
-    assert os.getenv("NEWS_API_KEY"), "❌ NEWS_API_KEY is missing in the .env file!"
+    assert os.getenv("NEWS_API_KEY"), "NEWS_API_KEY not found in .env file"
 
     news = news_scraper.get_magnificent_seven_news()
 
