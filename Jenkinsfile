@@ -44,6 +44,7 @@ pipeline {
                     export PYTHONPATH=$PWD
                     ./venv/bin/pytest --help | grep "pytest.ini"
                     ./venv/bin/pytest --cov=app --cov-report=html --cov-report=xml --cov-report=term-missing --junitxml=tests/results.xml tests/
+                    ls -la /var/lib/jenkins/workspace/pplication_feature_enabling-cicd/htmlcov
                 '''
                 junit allowEmptyResults: true, keepProperties: true, stdioRetention: '', testResults: 'tests/results.xml'
 
