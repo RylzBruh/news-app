@@ -39,10 +39,13 @@ pipeline {
         stage ('Unit Testing') {
             steps {
                 sh '''
+                    ls -la
+                    pwd
+                    export PYTHONPATH=$PWD
                     ./venv/bin/pytest --cov=app --cov-report=html --cov-report=xml tests/
                 '''
 
-                juinit allowEmptyResults: true, testResults: 'tests/results.xml'
+                junit allowEmptyResults: true, testResults: 'tests/results.xml'
             }
         }
     }
