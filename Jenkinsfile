@@ -73,7 +73,7 @@ pipeline {
         stage ('Build Docker Image') {
             steps {
                 sh 'printenv'
-                sh 'docker build -t rsrprojects/news-application:$GIT_COMMIT .'
+                sh 'sudo docker build -t rsrprojects/news-application:$GIT_COMMIT .'
             }
 
         }
