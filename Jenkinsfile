@@ -64,9 +64,8 @@ pipeline {
                                 -Dsonar.sources=app/ \
                                 -Dsonar.python.coverage.reportPaths=coverage.xml 
                         '''
-
-                        waitForQualityGate abortPipeline: true
                     }
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
