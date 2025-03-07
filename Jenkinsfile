@@ -42,9 +42,10 @@ pipeline {
                     ls -la
                     pwd
                     export PYTHONPATH=$PWD
-                    ./venv/bin/pytest --cov=app --cov-report=html --cov-report=xml tests/
+                    ./venv/bin/pytest --help | grep "pytest.ini"
+                    ./venv/bin/pytest --cov=app --cov-report=html --cov-report=xml --cov-report=term-missing --junitxml=tests/results.xml tests/
                 '''
-                junit allowEmptyResults: true, keepProperties: true, stdioRetention: '', testResults: 'coverage.xml'
+                junit allowEmptyResults: true, keepProperties: true, stdioRetention: '', testResults: 'tests/results.xml'
             }
         }
     }
