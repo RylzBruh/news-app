@@ -58,8 +58,8 @@ pipeline {
 
             publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'htmlcov', reportFiles: 'index.html', reportName: 'Code Coverage HTML Report', reportTitles: '', useWrapperFileDirectly: true])
         }
-        cleanup {
-            deleteDir()
-        }
+        // cleanup {
+        //     deleteDir()
+        // }
     }
 }
