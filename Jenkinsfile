@@ -53,7 +53,7 @@ pipeline {
 
     post {
         always {
-            archiveArtifacts allowEmptyArchive: true, artifacts: './htmlcov/*py.html, *_report.json', fingerprint: true, followSymlinks: false, onlyIfSuccessful: true
+            archiveArtifacts allowEmptyArchive: true, artifacts: 'htmlcov/**, *_report.json', fingerprint: true, followSymlinks: false, onlyIfSuccessful: true
         }
         // cleanup {
         //     deleteDir()
