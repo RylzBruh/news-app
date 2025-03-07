@@ -44,9 +44,8 @@ pipeline {
                     export PYTHONPATH=$PWD
                     ./venv/bin/pytest --cov=app --cov-report=html --cov-report=xml tests/
                 '''
-                publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, icon: '', keepAll: true, reportDir: './htmlcov', reportFiles: '*.html', reportName: 'HTML Report', reportTitles: '', useWrapperFileDirectly: true])
 
-                junit allowEmptyResults: true, testResults: 'coverage.xml'
+                junit allowEmptyResults: true, keepProperties: true, stdioRetention: '', testResults: 'coverage.xml'
             }
         }
     }
