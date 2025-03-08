@@ -34,7 +34,6 @@ pipeline {
             steps {
                 sh '''
                     ./venv/bin/pip-audit --format=columns --output=pip_audit_report.txt
-                    ./venv/bin/pip-audit --format=cyclonedx-json --output=pip_audit_report.sbom.json
                     ./venv/bin/pip-audit --strict --format=json --output=pip_audit_report.json
                 '''
             }
@@ -83,7 +82,7 @@ pipeline {
                 sh 'ls -la /usr/local/share/trivy/templates/'
                 sh '''
                     trivy image rsrprojects/news-application:$GIT_COMMIT \
-                        --severity LOW, MEDIUM \
+                        --severity LOW,MEDIUM \
                         --exit-code 0 \
                         --quiet \
                         --format json -o trivy-image-MEDIUM-results.json
