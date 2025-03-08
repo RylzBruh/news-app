@@ -80,7 +80,7 @@ pipeline {
 
         stage ('Trivy Vulnerability Scanner') {
             steps {
-                sh 'ls -la @/usr/local/share/trivy/templates/'
+                sh 'ls -la /usr/local/share/trivy/templates/'
                 sh '''
                     trivy image rsrprojects/news-application:$GIT_COMMIT \
                         -- severity LOW, MEDIUM \
@@ -99,19 +99,19 @@ pipeline {
                 always {
                     sh '''
                         trivy convert \
-                            -- format template -- template "@/usr/local/share/trivy/templates/html.tpl" \
+                            -- format template -- template "/usr/local/share/trivy/templates/html.tpl" \
                             -- output trivy-image-MEDIUM-results.html trivy-image-MEDIUM-results.json
 
                         trivy convert \
-                            -- format template -- template "@/usr/local/share/trivy/templates/html.tpl" \
+                            -- format template -- template "/usr/local/share/trivy/templates/html.tpl" \
                             -- output trivy-image-CRITICAL-results.html trivy-image-CRITICAL-results.json
 
                         trivy convert \
-                            -- format template -- template "@/usr/local/share/trivy/templates/junit.tpl" \
+                            -- format template -- template "/usr/local/share/trivy/templates/junit.tpl" \
                             -- output trivy-image-MEDIUM-results.xml trivy-image-MEDIUM-results.json
 
                         trivy convert \
-                            -- format template -- template "@/usr/local/share/trivy/templates/junit.tpl" \
+                            -- format template -- template "/usr/local/share/trivy/templates/junit.tpl" \
                             -- output trivy-image-CRITICAL-results.xml trivy-image-CRITICAL-results.json
                     '''
                 }
