@@ -136,9 +136,13 @@ pipeline {
             }
             steps {
                 script {
+                    withAWS(credentials: 'aws-creds', region: 'eu-west-1') {
+                        sh 'EC2_INSTANCE_URL=$(aws ec2 describe-instances | jq -r '.Reservations[].Instances[] | select(.Tags[].Value == "dev-deploy") | .PublicDnsName')'
+                        sh 'echo $EC2_INSTANCE_URL'
+                    }
                     sshagent(['aws-dev-deploy-ec2-instance']) {
                     sh '''
-                        ssh -o StrictHostKeyChecking=no ubuntu@52.215.46.205 "
+                        ssh -o StrictHostKeyChecking=no ubuntu@$EC2_INSTANCE_URL "
                                 if sudo docker ps | grep news-application; then
                                     echo "Container found. Stopping..."
                                         sudo docker stop "news-application" && sudo docker rm "news-application"
