@@ -127,7 +127,7 @@ pipeline {
     post {
         always {
 
-            archiveArtifacts allowEmptyArchive: true, artifacts: 'htmlcov/**, *_report.json', fingerprint: true, followSymlinks: false, onlyIfSuccessful: true
+            archiveArtifacts allowEmptyArchive: true, artifacts: 'htmlcov/**, *_report.json, *-results.*', fingerprint: true, followSymlinks: false, onlyIfSuccessful: true
 
             junit allowEmptyResults: true, keepProperties: true, stdioRetention: '', testResults: 'tests/results.xml'
             junit allowEmptyResults: true, keepProperties: true, stdioRetention: '', testResults: 'trivy-image-MEDIUM-results.xml'
@@ -142,5 +142,5 @@ pipeline {
     //     cleanup {
     //         deleteDir()
     //     }
-    // }
+    }
 }
