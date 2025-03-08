@@ -8,10 +8,13 @@ pipeline {
     }
 
     stages {
-        cleanup {
-            deleteDir()
+        stage ('Checkout') {
+            steps {
+                cleanws()
+                checkout scm
+            }
         }
-        
+
         stage ('Prepare Environment') {
             steps {
                 sh '''
