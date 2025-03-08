@@ -78,6 +78,44 @@ pipeline {
 
         }
 
+        stage ('Trivy Vulnerability Scanner') {
+            steps {
+                sh 'ls -la @/usr/local/share/trivy/templates/'
+                sh '''
+                    trivy image rsrprojects/news-application:$GIT_COMMIT \
+                        -- severity LOW, MEDIUM \
+                        -- exit-code 0 \
+                        -- quiet \
+                        -- format json -o trivy-image-MEDIUM-results.json
+
+                    trivy image rsrprojects/news-application:$GIT_COMMIT \
+                        -- severity CRITICAL \
+                        -- exit-code 1 \
+                        -- quiet \
+                        -- format json -o trivy-image-CRITICAL-results.json
+                '''
+            }
+            post {
+                always {
+                    sh '''
+                        trivy convert \
+                            -- format template -- template "@/usr/local/share/trivy/templates/html.tpl" \
+                            -- output trivy-image-MEDIUM-results.html trivy-image-MEDIUM-results.json
+
+                        trivy convert \
+                            -- format template -- template "@/usr/local/share/trivy/templates/html.tpl" \
+                            -- output trivy-image-CRITICAL-results.html trivy-image-CRITICAL-results.json
+
+                        trivy convert \
+                            -- format template -- template "@/usr/local/share/trivy/templates/junit.tpl" \
+                            -- output trivy-image-MEDIUM-results.xml trivy-image-MEDIUM-results.json
+
+                        trivy convert \
+                            -- format template -- template "@/usr/local/share/trivy/templates/junit.tpl" \
+                            -- output trivy-image-CRITICAL-results.xml trivy-image-CRITICAL-results.json
+                    '''
+            }
+        }
       
     }
 
@@ -85,9 +123,16 @@ pipeline {
         always {
 
             archiveArtifacts allowEmptyArchive: true, artifacts: 'htmlcov/**, *_report.json', fingerprint: true, followSymlinks: false, onlyIfSuccessful: true
+
             junit allowEmptyResults: true, keepProperties: true, stdioRetention: '', testResults: 'tests/results.xml'
+            junit allowEmptyResults: true, keepProperties: true, stdioRetention: '', testResults: 'trivy-image-MEDIUM-results.xml'
+            junit allowEmptyResults: true, keepProperties: true, stdioRetention: '', testResults: 'trivy-image-CRITICAL-results.xml'
 
             publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'htmlcov', reportFiles: 'index.html', reportName: 'Code Coverage HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+
+            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: './' reportFiles: 'trivy-image-CRITICAL-results.html', reportName: 'Trivy Image Critical Vul Report' reportTitles: '', useWrapperFileDirectly: true])
+
+            publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: './' reportFiles: 'trivy-image-MEDIUM-results.html', reportName: 'Trivy Image Medium Vul Report', reportTitles: '', useWrapperFileDirectly: true])
         }
         // cleanup {
         //     deleteDir()
