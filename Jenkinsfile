@@ -138,14 +138,14 @@ pipeline {
                 script {
                     sshagent(['aws-dev-deploy-ec2-instance']) {
                     sh '''
-                        ssh -o StrictHostKeyChecking=no ubuntu@52.211.22.129 "
+                        ssh -o StrictHostKeyChecking=no ubuntu@52.215.46.205 "
                                 if sudo docker ps | grep news-application; then
                                     echo "Container found. Stopping..."
                                         sudo docker stop "news-application" && sudo docker rm "news-application"
                                     echo "Container stopped and removed."
                                 fi
                                     sudo docker run --restart unless-stopped --name news-application \
-                                        -p 5000:5000 -d rsrprojects/news-application:$GIT_COMMIT
+                                    -p 5000:5000 -d rsrprojects/news-application:$GIT_COMMIT
                                 "
                     '''
                     }
