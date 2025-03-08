@@ -139,10 +139,7 @@ pipeline {
                     withAWS(credentials: 'aws-creds', region: 'eu-west-1') {
                         EC2_IP = sh(
                             script: '''
-                                aws ec2 describe-instances \
-                                    --filters "Name=tag:Name,Values=news-application" \
-                                    --query "Reservations[*].Instances[*].PublicIpAddress" \
-                                    --output text
+                                aws ec2 describe-instances | jq -r '.Reservations[].Instances[] | select(.Tags[].Value == "dev-deploy") | .PublicIpAddress'
                             ''',
                             returnStdout: true
                         ).trim()
