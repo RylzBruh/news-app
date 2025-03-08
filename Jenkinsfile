@@ -72,8 +72,7 @@ pipeline {
 
         stage ('Build Docker Image') {
             steps {
-                sh 'printenv'
-                sh 'sudo docker build -t rsrprojects/news-application:$GIT_COMMIT .'
+                sh 'docker build -t rsrprojects/news-application:$GIT_COMMIT .'
             }
 
         }
@@ -123,7 +122,16 @@ pipeline {
             }
       
         }
+
+        stage ('Build Docker Image') {
+            steps {
+                withDockerRegistry(credentialsId: 'docker-hub-credentials', url: "") {
+                    sh 'docker push rsrprojects/news-application:$GIT_COMMIT'
+                }     
+            }
+        }
     }
+    
     post {
         always {
 
