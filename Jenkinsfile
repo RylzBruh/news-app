@@ -88,7 +88,7 @@ pipeline {
                         --format json -o trivy-image-MEDIUM-results.json
 
                     trivy image rsrprojects/news-application:$GIT_COMMIT \
-                        --severity CRITICAL \
+                        --severity HIGH,CRITICAL \
                         --exit-code 1 \
                         --quiet \
                         --format json -o trivy-image-CRITICAL-results.json
@@ -96,6 +96,7 @@ pipeline {
             }
             post {
                 always {
+                    sh 'ls -la'
                     sh '''
                         trivy convert \
                             --format template --template "/usr/local/share/trivy/templates/html.tpl" \
