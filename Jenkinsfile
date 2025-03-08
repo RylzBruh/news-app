@@ -114,11 +114,11 @@ pipeline {
                             -- format template -- template "@/usr/local/share/trivy/templates/junit.tpl" \
                             -- output trivy-image-CRITICAL-results.xml trivy-image-CRITICAL-results.json
                     '''
+                }
             }
-        }
       
+        }
     }
-
     post {
         always {
 
