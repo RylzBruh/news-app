@@ -144,12 +144,26 @@ pipeline {
                                         sudo docker stop "news-application" && sudo docker rm "news-application"
                                     echo "Container stopped and removed."
                                 fi
-                                    sudo docker run --name news-application \
+                                    sudo docker run --restart unless-stopped --name news-application \
                                         -p 5000:5000 -d rsrprojects/news-application:$GIT_COMMIT
                                 "
                     '''
                     }
                 }   
+            }
+        }
+
+        stage ('Integration Testing - AWS EC2') {
+            when {
+                branch 'feature/*'
+            }
+            steps {
+                sh 'printenv | grep -i branch'
+                withAWS(credentials: 'aws-creds', region: 'eu-west-1') {
+                    sh '''
+                        bash integration-testing-ec2.sh
+                    '''
+                }
             }
         }
     }
