@@ -74,7 +74,6 @@ pipeline {
             steps {
                 sh 'docker build -t rsrprojects/news-application:$GIT_COMMIT .'
             }
-
         }
 
         stage ('Trivy Vulnerability Scanner') {
@@ -123,7 +122,7 @@ pipeline {
       
         }
 
-        stage ('Build Docker Image') {
+        stage ('Push Docker Image') {
             steps {
                 withDockerRegistry(credentialsId: 'docker-hub-credentials', url: "") {
                     sh 'docker push rsrprojects/news-application:$GIT_COMMIT'
