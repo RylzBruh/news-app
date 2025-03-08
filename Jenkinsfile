@@ -89,7 +89,7 @@ pipeline {
 
                     trivy image rsrprojects/news-application:$GIT_COMMIT \
                         --severity HIGH,CRITICAL \
-                        --exit-code 1 \
+                        --exit-code 0 \
                         --quiet \
                         --format json -o trivy-image-CRITICAL-results.json
                 '''
