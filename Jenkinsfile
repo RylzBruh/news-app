@@ -83,14 +83,14 @@ pipeline {
                 sh 'ls -la /usr/local/share/trivy/templates/'
                 sh '''
                     trivy image rsrprojects/news-application:$GIT_COMMIT \
-                        --severity LOW,MEDIUM \
+                        --severity LOW,MEDIUM,HIGH \
                         --exit-code 0 \
                         --quiet \
                         --format json -o trivy-image-MEDIUM-results.json
 
                     trivy image rsrprojects/news-application:$GIT_COMMIT \
-                        --severity HIGH,CRITICAL \
-                        --exit-code 0 \
+                        --severity CRITICAL \
+                        --exit-code 1 \
                         --quiet \
                         --format json -o trivy-image-CRITICAL-results.json
                 '''
@@ -129,9 +129,9 @@ pipeline {
 
             archiveArtifacts allowEmptyArchive: true, artifacts: 'htmlcov/**, *_report.json, *-results.*', fingerprint: true, followSymlinks: false, onlyIfSuccessful: true
 
-            junit allowEmptyResults: true, keepProperties: true, stdioRetention: '', testResults: 'tests/results.xml'
-            junit allowEmptyResults: true, keepProperties: true, stdioRetention: '', testResults: 'trivy-image-MEDIUM-results.xml'
-            junit allowEmptyResults: true, keepProperties: true, stdioRetention: '', testResults: 'trivy-image-CRITICAL-results.xml'
+            junit allowEmptyResults: true, stdioRetention: '', testResults: 'tests/results.xml'
+            junit allowEmptyResults: true, stdioRetention: '', testResults: 'trivy-image-MEDIUM-results.xml'
+            junit allowEmptyResults: true, stdioRetention: '', testResults: 'trivy-image-CRITICAL-results.xml'
 
             publishHTML([allowMissing: true, alwaysLinkToLastBuild: true, keepAll: true, reportDir: 'htmlcov', reportFiles: 'index.html', reportName: 'Code Coverage HTML Report', reportTitles: '', useWrapperFileDirectly: true])
 
