@@ -7,11 +7,11 @@ pipeline {
         SONAR_SCANNER_HOME = tool 'sonar-scanner7-0-1';
     }
 
-    cleanup {
-        deleteDir()
-    }
-
     stages {
+        cleanup {
+            deleteDir()
+        }
+        
         stage ('Prepare Environment') {
             steps {
                 sh '''
