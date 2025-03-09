@@ -260,7 +260,7 @@ pipeline {
                 sh '''
                     chmod 777 $(pwd)
                     docker run -v $(pwd):/zap/wrk/:rw -t ghcr.io/zaproxy/zaproxy:stable zap-full-scan.py \
-                    -t http://192.168.1.246:3000/ \
+                    -t http://192.168.49.2:30000/ \
                     -r zap-report.html \
                     -w zap-report.md \
                     -J zap-report.json \
