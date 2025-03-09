@@ -55,7 +55,7 @@ pipeline {
 
         stage ('SAST - Static application security testing - SonarQube') {
             steps {
-                timeout(time: 60, unit: 'SECONDS') {
+                timeout(time: 120, unit: 'SECONDS') {
                     withSonarQubeEnv('sonarqube-server') {
                         sh 'echo $SONAR_SCANNER_HOME'
                         sh '''
