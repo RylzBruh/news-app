@@ -198,6 +198,7 @@ pipeline {
                         git config --global user.email "jenkins@rsr.com"
                         git config --global user.name "Jenkins"
                         git remote set-url origin http://$GITEA_TOKEN@192.168.1.246:3000/news-application/news-application-argocd
+                        git pull
                         git add .
                         git commit -am "Update Docker Image Tag to $GIT_COMMIT"
                         git push origin feature-$BUILD_ID
