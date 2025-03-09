@@ -31,43 +31,45 @@ pipeline {
                 '''
             }
         }
-
-        parallel {
-            stage ('Dependency Scanning') {
-                steps {
-                    sh '''
-                        ./venv/bin/pip-audit --format=columns --output=pip_audit_report.txt
-                        ./venv/bin/pip-audit --strict --format=json --output=pip_audit_report.json
-                    '''
+        
+        stage ('Code Testing') {
+            parallel {
+                stage ('Dependency Scanning') {
+                    steps {
+                        sh '''
+                            ./venv/bin/pip-audit --format=columns --output=pip_audit_report.txt
+                            ./venv/bin/pip-audit --strict --format=json --output=pip_audit_report.json
+                        '''
+                    }
                 }
-            }
 
-            stage ('Unit Testing') {
-                steps {
-                    sh '''
-                        ls -la
-                        pwd
-                        export PYTHONPATH=$PWD
-                        ./venv/bin/pytest --help | grep "pytest.ini"
-                        ./venv/bin/pytest --cov=app --cov-report=html --cov-report=xml --cov-report=term-missing --junitxml=tests/results.xml tests/
-                        ls -la htmlcov
-                    '''
+                stage ('Unit Testing') {
+                    steps {
+                        sh '''
+                            ls -la
+                            pwd
+                            export PYTHONPATH=$PWD
+                            ./venv/bin/pytest --help | grep "pytest.ini"
+                            ./venv/bin/pytest --cov=app --cov-report=html --cov-report=xml --cov-report=term-missing --junitxml=tests/results.xml tests/
+                            ls -la htmlcov
+                        '''
+                    }
                 }
-            }
 
-            stage ('SAST - Static application security testing - SonarQube') {
-                steps {
-                    timeout(time: 5, unit: 'MINUTES') {
-                        withSonarQubeEnv('sonarqube-server') {
-                            sh 'echo $SONAR_SCANNER_HOME'
-                            sh '''
-                                $SONAR_SCANNER_HOME/bin/sonar-scanner \
-                                    -Dsonar.projectKey=Solar-System-Project \
-                                    -Dsonar.sources=app/ \
-                                    -Dsonar.python.coverage.reportPaths=coverage.xml 
-                            '''
+                stage ('SAST - Static application security testing - SonarQube') {
+                    steps {
+                        timeout(time: 5, unit: 'MINUTES') {
+                            withSonarQubeEnv('sonarqube-server') {
+                                sh 'echo $SONAR_SCANNER_HOME'
+                                sh '''
+                                    $SONAR_SCANNER_HOME/bin/sonar-scanner \
+                                        -Dsonar.projectKey=Solar-System-Project \
+                                        -Dsonar.sources=app/ \
+                                        -Dsonar.python.coverage.reportPaths=coverage.xml 
+                                '''
+                            }
+                            waitForQualityGate abortPipeline: true
                         }
-                        waitForQualityGate abortPipeline: true
                     }
                 }
             }
@@ -267,7 +269,7 @@ pipeline {
                             echo "Container stopped and removed."
                         fi
                             chmod 777 $(pwd)
-                            docker run --name zap-scanner --network=host -v $(pwd):/zap/wrk/:rw -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \
+                            docker run --rm --name zap-scanner --network=host -v $(pwd):/zap/wrk/:rw -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \
                             -t http://192.168.49.2:30000/ \
                             -r zap-report.html \
                             -w zap-report.md \
