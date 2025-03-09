@@ -240,6 +240,36 @@ pipeline {
             }
         }
 
+        stage ('Application Running?') {
+            when {
+                branch 'PR*'
+            }
+            steps {
+                timeout(time: 1, unit: 'DAYS') {
+                    input message: 'Is the application running?', ok: 'Yes! PR is Merged and ArgoCD Application Synced'
+                }
+            }
+
+        }
+
+        stage ('DAST - OWASP ZAP') {
+            when {
+                branch 'PR*'
+            }
+            steps {
+                sh '''
+                    chmod 777 $(pwd)
+                    docker run -v $(pwd):/zap/wrk/:rw -t ghcr.io/zaproxy/zaproxy:stable zap-full-scan.py \
+                    -t http://192.168.1.246:3000/ \
+                    -r zap-report.html \
+                    -w zap-report.md \
+                    -J zap-report.json \
+                    -x zap-report.xml 
+
+                '''
+            }
+        }
+
     }
     
     post {
