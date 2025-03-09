@@ -187,12 +187,12 @@ pipeline {
                 dir("news-application-argocd/kubernetes") {
                     sh '''
                         ls -la
-                        cat deployment.yaml
+                        cat deployment.yml
                         #### Replace Docker Tag ####
                         git checkout main
                         git checkout -b feature-$BUILD_ID
-                        sed -i "s#rsrprojects.*#rsrprojects/news-application:$GIT_COMMIT#g" deployment.yaml
-                        cat deployment.yaml
+                        sed -i "s#rsrprojects.*#rsrprojects/news-application:$GIT_COMMIT#g" deployment.yml
+                        cat deployment.yml
 
                         #### Commit and Push to Feature Branch ####
                         git config --global user.email "jenkins@rsr.com"
