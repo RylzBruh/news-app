@@ -206,6 +206,31 @@ pipeline {
             }
         }
 
+        stage ('K8S - Raise PR') {
+            when {
+                branch 'PR*'
+            }
+            steps {
+                sh '''
+                    curl -X 'POST' \
+                        'http://192.168.1.246:3000/api/v1/repos/news-application/news-application-argocd/pulls' \
+                        -H 'accept: application/json' \
+                        -H 'Authorization: token $GITEA_TOKEN' \
+                        -H 'Content-Type: application/json' \
+                        -d '{
+                            "assignee": "rafael",
+                            "assignees": [
+                                "rafael"
+                            ],
+                            "base": "main",
+                            "body": "Update docker image in deployment manifest",
+                            "head": "feature-$BUILD_ID",
+                            "title": "Update Docker Image"
+                        }'
+                '''
+            }
+        }
+
     }
     
     post {
