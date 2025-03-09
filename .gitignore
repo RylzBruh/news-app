@@ -5,5 +5,4 @@ __pycache__/
 .docker/
 .pytest_cache/
 terraform_workspace/
-README.md
 test1.txt
