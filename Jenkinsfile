@@ -259,7 +259,7 @@ pipeline {
             steps {
                 sh '''
                     chmod 777 $(pwd)
-                    docker run -v $(pwd):/zap/wrk/:rw -t ghcr.io/zaproxy/zaproxy:stable zap-full-scan.py \
+                    docker run --name zap-scanner -p 47779:47779 -v $(pwd):/zap/wrk/:rw -t ghcr.io/zaproxy/zaproxy:stable zap-full-scan.py -port 47779 -host 0.0.0.0 \
                     -t http://192.168.49.2:30000/ \
                     -r zap-report.html \
                     -w zap-report.md \
