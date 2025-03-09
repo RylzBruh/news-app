@@ -186,6 +186,8 @@ pipeline {
                 sh 'git clone -b main http://192.168.1.246:3000/news-application/news-application-argocd.git'
                 dir("news-application-argocd/kubernetes") {
                     sh '''
+                        ls -la
+                        cat deployment.yaml
                         #### Replace Docker Tag ####
                         git checkout main
                         git checkout -b feature-$BUILD_ID
