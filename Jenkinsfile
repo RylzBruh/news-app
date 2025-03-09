@@ -26,7 +26,7 @@ pipeline {
                 sudo apt-get update -qq && sudo apt-get install -y python3 python3-venv -qq
                 which python3
                 python3 -m venv venv
-                ./venv/bin/pip install -r requirements.txt --no-cache-dir
+                ./venv/bin/pip install -r requirements.txt
                 '''
             }
         }
@@ -55,7 +55,7 @@ pipeline {
 
         stage ('SAST - Static application security testing - SonarQube') {
             steps {
-                timeout(time: 120, unit: 'SECONDS') {
+                timeout(time: 5, unit: 'MINUTES') {
                     withSonarQubeEnv('sonarqube-server') {
                         sh 'echo $SONAR_SCANNER_HOME'
                         sh '''
