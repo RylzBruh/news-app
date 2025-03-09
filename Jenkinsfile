@@ -5,6 +5,7 @@ pipeline {
         API_KEY = credentials('NEWS_API_KEY')
         NVD_API_KEY = credentials('NVD_API_KEY')
         SONAR_SCANNER_HOME = tool 'sonar-scanner7-0-1';
+        GITEA_TOKEN = credentials('gitea-token')
     }
 
     stages {
@@ -176,10 +177,43 @@ pipeline {
                 }
             }
         }
+
+        stage ('K8S update Image Tag') {
+            when {
+                branch 'PR*'
+            }
+            steps {
+                sh 'git clone -b main http://192.168.1.246:3000/news-application/news-application-argocd.git'
+                dir("news-application-argocd/kubernetes") {
+                    sh '''
+                        #### Replace Docker Tag ####
+                        git checkout main
+                        git checkout -b feature-$BUILD_ID
+                        sed -i "s#rsrprojects.*#rsrprojects/news-application:$GIT_COMMIT#g" deployment.yaml
+                        cat deployment.yaml
+
+                        #### Commit and Push to Feature Branch ####
+                        git config --global user.email "jenkins@rsr.com"
+                        git config --global user.name "Jenkins"
+                        git remote set-url origin http://$GITEA_TOKEN@192.168.1.246:3000/news-application/news-application-argocd
+                        git add .
+                        git commit -am "Update Docker Image Tag to $GIT_COMMIT"
+                        git push origin feature-$BUILD_ID
+                    '''
+                }
+            }
+        }
+
     }
     
     post {
         always {
+            script {
+                if (fileExists('news-application-argocd')) {
+                    sh 'rm -rf news-application-argocd'
+                }
+            }
+
 
             archiveArtifacts allowEmptyArchive: true, artifacts: 'htmlcov/**, *_report.json, *-results.*', fingerprint: true, followSymlinks: false, onlyIfSuccessful: true
 
