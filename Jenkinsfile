@@ -185,24 +185,32 @@ pipeline {
             steps {
                 sh 'git clone -b main http://192.168.1.246:3000/news-application/news-application-argocd.git'
                 dir("news-application-argocd/kubernetes") {
-                    sh '''
-                        ls -la
-                        cat deployment.yml
-                        #### Replace Docker Tag ####
-                        git checkout main
-                        git checkout -b feature-$BUILD_ID
-                        sed -i "s#rsrprojects.*#rsrprojects/news-application:$GIT_COMMIT#g" deployment.yml
-                        cat deployment.yml
-
-                        #### Commit and Push to Feature Branch ####
-                        git config --global user.email "jenkins@rsr.com"
-                        git config --global user.name "Jenkins"
-                        git remote set-url origin http://$GITEA_TOKEN@192.168.1.246:3000/news-application/news-application-argocd
-                        git pull origin feature-$BUILD_ID
-                        git add .
-                        git commit -am "Update Docker Image Tag to $GIT_COMMIT"
-                        git push origin feature-$BUILD_ID
-                    '''
+                    script {
+                        sh """
+                            if git branch -r | grep feature-$BUILD_ID; then
+                                echo "Branch exists. Pulling changes..."
+                                    git checkout feature-$BUILD_ID
+                                    git pull origin feature-$BUILD_ID
+                                echo "Branch updated."
+                            else
+                                echo "Branch does not exist. Creating new branch..."
+                                    git checkout -b feature-$BUILD_ID
+                                echo "Branch created."
+                            fi
+                                echo "Updating Docker Image Tag in deployment manifest..."
+                                    sed -i "s#rsrprojects.*#rsrprojects/news-application:$GIT_COMMIT#g" deployment.yml
+                                    cat deployment.yml
+                                echo "Committing changes..."
+                                    git config --global user.email "jenkins@rsr.com"
+                                    git config --global user.name "Jenkins"
+                                    git remote set-url origin http://$GITEA_TOKEN@192.168.1.246:3000/news-application/news-application-argocd
+                                    git add .
+                                    git commit -am "Update Docker Image Tag to $GIT_COMMIT"
+                                echo "Pushing changes..."
+                                    git push origin feature-$BUILD_ID
+                                echo "Changes pushed."
+                        """
+                    }
                 }
             }
         }
