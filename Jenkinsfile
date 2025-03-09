@@ -31,7 +31,7 @@ pipeline {
                 '''
             }
         }
-        
+
         stage ('Code Testing') {
             parallel {
                 stage ('Dependency Scanning') {
@@ -263,7 +263,7 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        if docker ps | grep zap-scanner; then
+                        if docker ps -a | grep zap-scanner; then
                             echo "Container found. Stopping..."
                                 docker stop zap-scanner && docker rm zap-scanner
                             echo "Container stopped and removed."
