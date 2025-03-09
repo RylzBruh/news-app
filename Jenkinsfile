@@ -220,7 +220,7 @@ pipeline {
                 branch 'PR*'
             }
             steps {
-                sh '''
+                sh """
                     curl -X 'POST' \
                         'http://192.168.1.246:3000/api/v1/repos/news-application/news-application-argocd/pulls' \
                         -H 'accept: application/json' \
@@ -236,7 +236,7 @@ pipeline {
                             "head": "feature-$BUILD_ID",
                             "title": "Update Docker Image"
                         }'
-                '''
+                """
             }
         }
 
