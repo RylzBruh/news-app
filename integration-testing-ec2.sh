@@ -11,7 +11,7 @@ echo "URL Data - "$URL
 if [[ "$URL" != '' ]]; then
     http_code=$(curl -s -o /dev/null -w "%{http_code}" http://$URL:5000/health)
         echo "http_code - "$http_code
-    news_data_length=$(curl -s "http://52.215.46.205:5000/" | wc -c)
+    news_data_length=$(curl -s "http://$URL:5000/" | wc -c)
         echo "news_data - "$news_data_length
 
     if [[ "$http_code" -eq 200 && "$news_data_length" -gt 30000 ]];
