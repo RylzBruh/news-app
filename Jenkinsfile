@@ -280,6 +280,31 @@ pipeline {
                 }
             }
         }
+
+        stage ('Upload - AWS S3') {
+            when {
+                branch 'PR*'
+            }
+            steps {
+                script {
+                    withAWS(region: 'eu-west-1', credentials: 'aws-creds') {
+                        sh '''
+                            ls -la
+                            mkdir reports-$BUILD_ID
+                            cp -f htmlcov/ reports-$BUILD_ID/
+                            cp -f zap-report* reports-$BUILD_ID/
+                            cp -f trivy-image-* results-$BUILD_ID/
+                            ls -la reports-$BUILD_ID/
+                        '''
+                        s3Upload(
+                            file: "reports-$BUILD_ID",
+                            bucket: "news-app-jenkins-reports",
+                            path: "jenkins-$BUILD_ID/"
+                        )
+                    }
+                }
+            }
+        }
     }
     
     post {
