@@ -295,9 +295,12 @@ pipeline {
                         sh '''
                             ls -la
                             mkdir reports-$BUILD_ID
-                            cp -f htmlcov/ reports-$BUILD_ID/
-                            cp -f zap-report* reports-$BUILD_ID/
-                            cp -f trivy-image-* results-$BUILD_ID/
+                            cp -rf htmlcov/ reports-$BUILD_ID/
+                            cp -rf tests/*.xml results-$BUILD_ID/
+                            cp -rf *.xml reports-$BUILD_ID/
+                            cp -rf *.html reports-$BUILD_ID/
+                            cp -rf *.json reports-$BUILD_ID/
+                            cp -rf zap-report.md reports-$BUILD_ID/
                             ls -la reports-$BUILD_ID/
                         '''
                         s3Upload(
