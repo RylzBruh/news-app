@@ -279,17 +279,7 @@ pipeline {
                             -w zap-report.md \
                             -J zap-report.json \
                             -x zap-report.xml \
-                            -c zap_ignore_rules
-                            
-                        EXIT_CODE=$?
-
-                        echo "$EXIT_CODE"
-
-                        if [ $EXIT_CODE -ne 0 ]; then
-                            echo "ZAP testing ended with EXIT_CODE=$EXIT_CODE! On you to check what are the risks!"
-                        fi
-                        
-                        exit 0
+                            -c zap_ignore_rules || exit code 0
                     '''
                 }
             }
