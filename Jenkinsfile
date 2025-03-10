@@ -279,7 +279,7 @@ pipeline {
                             -w zap-report.md \
                             -J zap-report.json \
                             -x zap-report.xml \
-                            -c zap_ignore_rules || exit code 0
+                            -c zap_ignore_rules || true
                     '''
                 }
             }
