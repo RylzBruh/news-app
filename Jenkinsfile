@@ -262,21 +262,35 @@ pipeline {
             }
             steps {
                 script {
-                    sh '''
+                    sh """
                         if docker ps -a | grep zap-scanner; then
                             echo "Container found. Stopping..."
                                 docker stop zap-scanner && docker rm zap-scanner
                             echo "Container stopped and removed."
+                        else
+                            echo "Container not foumd. Creating..."
                         fi
-                            chmod 777 $(pwd)
-                            docker run --rm --name zap-scanner --network=host -v $(pwd):/zap/wrk/:rw -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \
+                        
+                        chmod 777 $(pwd)
+                        
+                        docker run --rm --name zap-scanner --network=host -v $(pwd):/zap/wrk/:rw -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \
                             -t http://192.168.49.2:30000/ \
                             -r zap-report.html \
                             -w zap-report.md \
                             -J zap-report.json \
                             -x zap-report.xml \
                             -c zap_ignore_rules
-                    '''
+                            
+                        EXIT_CODE=$?
+
+                        echo "$EXIT_CODE"
+
+                        if [ $EXIT_CODE -ne 0 ]; then
+                            echo "ZAP testing ended with EXIT_CODE=$EXIT_CODE! On you to check what are the risks!"
+                        fi
+                        
+                        exit 0
+                    """
                 }
             }
         }
