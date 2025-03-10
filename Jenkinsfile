@@ -296,7 +296,7 @@ pipeline {
                             ls -la
                             mkdir reports-$BUILD_ID
                             cp -rf htmlcov/ reports-$BUILD_ID/
-                            cp -rf tests/*.xml results-$BUILD_ID/
+                            cp -rf tests/*.xml reports-$BUILD_ID/
                             cp -rf *.xml reports-$BUILD_ID/
                             cp -rf *.html reports-$BUILD_ID/
                             cp -rf *.json reports-$BUILD_ID/
