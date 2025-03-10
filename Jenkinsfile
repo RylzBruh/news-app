@@ -262,7 +262,7 @@ pipeline {
             }
             steps {
                 script {
-                    sh """
+                    sh '''
                         if docker ps -a | grep zap-scanner; then
                             echo "Container found. Stopping..."
                                 docker stop zap-scanner && docker rm zap-scanner
@@ -290,7 +290,7 @@ pipeline {
                         fi
                         
                         exit 0
-                    """
+                    '''
                 }
             }
         }
