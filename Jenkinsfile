@@ -312,6 +312,18 @@ pipeline {
                 }
             }
         }
+
+        stage ('Deploy to Prod?') {
+            when {
+                branch 'main'
+            }
+            steps {
+                timeout(time: 1, unit: 'DAYS') {
+                    input message: 'Deploy to Production?', ok: 'Yes! I trust it to work!', submitter: 'Rafael'
+                }
+            }
+
+        }
     }
     
     post {
