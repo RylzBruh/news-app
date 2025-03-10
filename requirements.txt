@@ -1,7 +1,9 @@
 flask==3.0.2
-requests==2.31.0
+requests==2.32.0
 beautifulsoup4==4.12.3
 python-dotenv==1.0.1
 newsapi-python==0.2.7
 pytest==8.1.1
 flake8==7.1.2
+pip-audit==2.8.0
+pytest-cov==6.0.0

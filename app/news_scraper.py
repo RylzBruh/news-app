@@ -24,11 +24,11 @@ def get_magnificent_seven_news():
     for company in companies:
         try:
             news = newsapi.get_everything(
-                q=f'{company} stock',
+                q=f'{company}',
                 language='en',
                 from_param=(datetime.now() - timedelta(days=7)).strftime('%Y-%m-%d'),
-                to=datetime.now().strftime('%Y-%m-%d'),
-                sort_by='publishedAt'
+                to=datetime.now().strftime('%Y-%m-%d'), 
+                sort_by='publishedAt',
             )          
            # Add company name to each article
             for article in news['articles']:

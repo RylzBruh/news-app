@@ -23,6 +23,14 @@ __pycache__/
 *.pyc
 *.pyo
 .pytest_cache/
+.scannerwork/
+htmlcov/
+.coverage
+coverage.xml
+LICENSE
+pip_audit_report.json
+pip_audit_report.sbom.json
+pytest.ini
 
 # Ignore Docker-related files
 .dockerignore
@@ -35,4 +43,6 @@ Thumbs.db
 # Additional files
 README.md
 test1.txt
+
+integration-testing-ec2.sh
 
