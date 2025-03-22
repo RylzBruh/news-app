@@ -6,6 +6,10 @@ pipeline {
         NVD_API_KEY = credentials('NVD_API_KEY')
         SONAR_SCANNER_HOME = tool 'sonar-scanner7-0-1';
         GITEA_TOKEN = credentials('gitea-token')
+        DOCKER_REG = "rylzbruh"
+        GIT_SERVER = "jenkins-controller-1.local:3000"
+        GIT_URL= "jenkins-controller-1.local:3000/news-application"
+        ZAP_TARGET_URL = "http://news-app.local"
     }
 
     stages {
@@ -77,7 +81,7 @@ pipeline {
 
         stage ('Build Docker Image') {
             steps {
-                sh 'docker build -t rsrprojects/news-application:$GIT_COMMIT .'
+                sh 'docker build -t $DOCKER_REG/news-application:$BUILD_ID .'
             }
         }
 
@@ -85,13 +89,13 @@ pipeline {
             steps {
                 sh 'ls -la /usr/local/share/trivy/templates/'
                 sh '''
-                    trivy image rsrprojects/news-application:$GIT_COMMIT \
+                    trivy image $DOCKER_REG/news-application:$BUILD_ID \
                         --severity LOW,MEDIUM,HIGH \
                         --exit-code 0 \
                         --quiet \
                         --format json -o trivy-image-MEDIUM-results.json
 
-                    trivy image rsrprojects/news-application:$GIT_COMMIT \
+                    trivy image $DOCKER_REG/news-application:$BUILD_ID \
                         --severity CRITICAL \
                         --exit-code 1 \
                         --quiet \
@@ -130,7 +134,7 @@ pipeline {
         stage ('Push Docker Image') {
             steps {
                 withDockerRegistry(credentialsId: 'docker-hub-credentials', url: "") {
-                    sh 'docker push rsrprojects/news-application:$GIT_COMMIT'
+                    sh 'docker push $DOCKER_REG/news-application:$BUILD_ID'
                 }     
             }
         }
@@ -160,7 +164,7 @@ pipeline {
                                         echo "Container stopped and removed."
                                     fi
                                         sudo docker run --restart unless-stopped --name news-application \
-                                        -p 5000:5000 -d rsrprojects/news-application:${GIT_COMMIT}
+                                        -p 5000:5000 -d ${DOCKER_REG}/news-application:${BUILD_ID}
                                     '
                         """
                     }
@@ -187,7 +191,7 @@ pipeline {
                 branch 'PR*'
             }
             steps {
-                sh 'git clone -b main http://192.168.1.246:3000/news-application/news-application-argocd.git'
+                sh 'git clone -b main http://$GIT_URL/news-application-argocd.git'
                 dir("news-application-argocd/kubernetes") {
                     script {
                         sh """
@@ -202,14 +206,14 @@ pipeline {
                                 echo "Branch created."
                             fi
                                 echo "Updating Docker Image Tag in deployment manifest..."
-                                    sed -i "s#rsrprojects.*#rsrprojects/news-application:$GIT_COMMIT#g" deployment.yml
+                                    sed -i "s#$DOCKER_REG.*#$DOCKER_REG/news-application:$BUILD_ID#g" deployment.yml
                                     cat deployment.yml
                                 echo "Committing changes..."
                                     git config --global user.email "jenkins@rsr.com"
                                     git config --global user.name "Jenkins"
                                     git remote set-url origin http://$GITEA_TOKEN@192.168.1.246:3000/news-application/news-application-argocd
                                     git add .
-                                    git commit -am "Update Docker Image Tag to $GIT_COMMIT"
+                                    git commit -am "Update Docker Image Tag to $BUILD_ID"
                                 echo "Pushing changes..."
                                     git push origin feature-$BUILD_ID
                                 echo "Changes pushed."
@@ -226,7 +230,7 @@ pipeline {
             steps {
                 sh """
                     curl -X 'POST' \
-                        'http://192.168.1.246:3000/api/v1/repos/news-application/news-application-argocd/pulls' \
+                        'http://$GIT_SERVER/api/v1/repos/news-application/news-application-argocd/pulls' \
                         -H 'accept: application/json' \
                         -H 'Authorization: token $GITEA_TOKEN' \
                         -H 'Content-Type: application/json' \
@@ -262,6 +266,7 @@ pipeline {
             }
             steps {
                 script {
+                    sh 'curl --fail --retry 3 $ZAP_TARGET_URL/health'
                     sh '''
                         if docker ps -a | grep zap-scanner; then
                             echo "Container found. Stopping..."
@@ -274,7 +279,7 @@ pipeline {
                         chmod 777 $(pwd)
                         
                         docker run --rm --name zap-scanner --network=host -v $(pwd):/zap/wrk/:rw -t ghcr.io/zaproxy/zaproxy:stable zap-baseline.py \
-                            -t http://192.168.49.2:30000/ \
+                            -t $ZAP_TARGET_URL \
                             -r zap-report.html \
                             -w zap-report.md \
                             -J zap-report.json \
